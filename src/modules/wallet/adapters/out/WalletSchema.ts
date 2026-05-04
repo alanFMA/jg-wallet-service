@@ -1,6 +1,6 @@
 // src/modules/wallet/adapters/out/WalletSchema.ts
 import { EntitySchema, EntityCtor } from '@mikro-orm/core'; // Adicione o EntityCtor aqui
-import { Wallet } from '../../core/domain/Wallet';
+import { Wallet } from '../../core/domain/Wallet.js';
 
 export const WalletSchema = new EntitySchema<Wallet>({
   // Transformamos a classe primeiro em unknown (seguro) e depois no tipo exato que o MikroORM exige

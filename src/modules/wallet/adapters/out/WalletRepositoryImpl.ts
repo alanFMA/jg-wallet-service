@@ -1,8 +1,8 @@
 // src/modules/wallet/adapters/out/WalletRepositoryImpl.ts
 import { Injectable } from '@nestjs/common';
 import { EntityManager } from '@mikro-orm/postgresql';
-import { IWalletRepository } from '../../core/ports/IWalletRepository';
-import { Wallet } from '../../core/domain/Wallet';
+import { IWalletRepository } from '../../core/ports/IWalletRepository.js';
+import { Wallet } from '../../core/domain/Wallet.js';
 
 @Injectable()
 export class WalletRepositoryImpl implements IWalletRepository {

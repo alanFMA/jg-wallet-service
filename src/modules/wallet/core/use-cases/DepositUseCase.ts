@@ -1,5 +1,5 @@
 // src/modules/wallet/core/use-cases/DepositUseCase.ts
-import { IWalletRepository } from '../ports/IWalletRepository';
+import { IWalletRepository } from '../ports/IWalletRepository.js';
 
 // DTO (Data Transfer Object) simples para a entrada do caso de uso
 export interface DepositInput {

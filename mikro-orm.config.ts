@@ -1,6 +1,6 @@
 // apps/jg-wallet-service/mikro-orm.config.ts
 import { Options, PostgreSqlDriver } from '@mikro-orm/postgresql';
-import { WalletSchema } from './src/modules/wallet/adapters/out/WalletSchema';
+import { WalletSchema } from './src/modules/wallet/adapters/out/WalletSchema.js';
 
 const config: Options = {
   driver: PostgreSqlDriver,

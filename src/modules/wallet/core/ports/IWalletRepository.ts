@@ -1,5 +1,5 @@
 // src/modules/wallet/core/ports/IWalletRepository.ts
-import { Wallet } from '../domain/Wallet';
+import { Wallet } from '../domain/Wallet.js';
 
 export interface IWalletRepository {
   findById(id: string): Promise<Wallet | null>;
