@@ -1,10 +1,17 @@
 // src/modules/wallet/core/domain/Wallet.ts
 
+export type DomainEvent = {
+  eventType: string;
+  payload: Record<string, unknown>;
+};
+
 export class Wallet {
   private id: string;
   private userId: string;
   private balance: number; // Trabalhar com centavos é boa prática financeira
   private createdAt: Date;
+
+  private readonly events: DomainEvent[] = [];
 
   private constructor(
     id: string,
@@ -40,6 +47,17 @@ export class Wallet {
       throw new Error('Deposit amount must be greater than zero');
     }
     this.balance += amount;
+
+    this.events.push({
+      eventType: 'WalletFunded',
+      payload: {
+        walletId: this.id,
+        userId: this.userId,
+        amount: amount,
+        newBalance: this.balance,
+        timestamp: new Date().toISOString(),
+      },
+    });
   }
 
   // Regra de negócio: Saque
@@ -53,6 +71,13 @@ export class Wallet {
     this.balance -= amount;
   }
 
+  public getDomainEvents(): DomainEvent[] {
+    return [...this.events];
+  }
+
+  public clearEvents(): void {
+    this.events.length = 0;
+  }
   // Getters para expor os dados (sem setters, para proteger o estado)
   public getId(): string {
     return this.id;
