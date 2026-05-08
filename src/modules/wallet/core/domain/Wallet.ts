@@ -73,6 +73,21 @@ export class Wallet {
       throw new Error('Insufficient funds');
     }
     this.balance -= amount;
+
+    if (!this.events) {
+      this.events = [];
+    }
+
+    this.events.push({
+      eventType: 'WalletWithdrawn',
+      payload: {
+        walletId: this.id,
+        userId: this.userId,
+        amount: amount,
+        newBalance: this.balance,
+        timestamp: new Date().toISOString(),
+      },
+    });
   }
 
   public getDomainEvents(): DomainEvent[] {

@@ -9,6 +9,7 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { DepositUseCase } from '../../core/use-cases/DepositUseCase.js';
+import { WithdrawUseCase } from '../../core/use-cases/WithdrawUseCase.js';
 
 // DTO para validar a entrada
 export class DepositDto {
@@ -17,9 +18,16 @@ export class DepositDto {
   amount!: number;
 }
 
+export class WithdrawDto {
+  amount!: number;
+}
+
 @Controller('wallets')
 export class WalletController {
-  constructor(private readonly depositUseCase: DepositUseCase) {}
+  constructor(
+    private readonly depositUseCase: DepositUseCase,
+    private readonly withdrawUseCase: WithdrawUseCase,
+  ) {}
 
   @Post(':id/deposit')
   @HttpCode(HttpStatus.OK)
@@ -42,6 +50,29 @@ export class WalletController {
       }
 
       // Fallback genérico caso o que tenha sido lançado não seja um erro mapeado
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Post(':id/withdraw')
+  @HttpCode(HttpStatus.OK) // Padroniza o retorno de sucesso para 200 OK
+  async withdraw(@Param('id') walletId: string, @Body() body: WithdrawDto) {
+    try {
+      await this.withdrawUseCase.execute({
+        walletId,
+        amount: body.amount,
+      });
+      return { message: 'Withdrawal successful' };
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        if (error.message === 'Wallet not found') {
+          throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+        }
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      }
       throw new HttpException(
         'Internal server error',
         HttpStatus.INTERNAL_SERVER_ERROR,

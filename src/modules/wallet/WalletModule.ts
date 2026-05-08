@@ -9,6 +9,7 @@ import { IWalletRepository } from './core/ports/IWalletRepository.js';
 import { SqsMessageBrokerImpl } from './adapters/out/SqsMessageBrokerImpl.js';
 import { OutboxEventSchema } from './adapters/out/OutboxEventSchema.js';
 import { OutboxProcessor } from './workers/OutboxProcessor.js';
+import { WithdrawUseCase } from './core/use-cases/WithdrawUseCase.js';
 
 @Module({
   // Importamos o Schema para o MikroORM saber lidar com ele neste módulo
@@ -25,13 +26,19 @@ import { OutboxProcessor } from './workers/OutboxProcessor.js';
       useClass: SqsMessageBrokerImpl,
     },
     // 2. Ensinamos o Nest: "Como o DepositUseCase é puro, eu te mostro como construí-lo"
+    OutboxProcessor,
     {
       provide: DepositUseCase,
       useFactory: (repository: IWalletRepository) =>
         new DepositUseCase(repository),
       inject: ['IWalletRepository'], // Injeta o token que definimos logo acima
     },
-    OutboxProcessor,
+    {
+      provide: WithdrawUseCase,
+      useFactory: (repository: IWalletRepository) =>
+        new WithdrawUseCase(repository),
+      inject: ['IWalletRepository'],
+    },
   ],
 })
 export class WalletModule {}
