@@ -6,16 +6,23 @@ import { WalletRepositoryImpl } from './adapters/out/WalletRepositoryImpl.js';
 import { DepositUseCase } from './core/use-cases/DepositUseCase.js';
 import { WalletController } from './adapters/in/WalletController.js';
 import { IWalletRepository } from './core/ports/IWalletRepository.js';
+import { SqsMessageBrokerImpl } from './adapters/out/SqsMessageBrokerImpl.js';
+import { OutboxEventSchema } from './adapters/out/OutboxEventSchema.js';
+import { OutboxProcessor } from './workers/OutboxProcessor.js';
 
 @Module({
   // Importamos o Schema para o MikroORM saber lidar com ele neste módulo
-  imports: [MikroOrmModule.forFeature([WalletSchema])],
+  imports: [MikroOrmModule.forFeature([WalletSchema, OutboxEventSchema])],
   controllers: [WalletController],
   providers: [
     // 1. Ensinamos o Nest: "Quando alguém pedir IWalletRepository, entregue o WalletRepositoryImpl"
     {
       provide: 'IWalletRepository',
       useClass: WalletRepositoryImpl,
+    },
+    {
+      provide: 'IMessageBroker',
+      useClass: SqsMessageBrokerImpl,
     },
     // 2. Ensinamos o Nest: "Como o DepositUseCase é puro, eu te mostro como construí-lo"
     {
@@ -24,6 +31,7 @@ import { IWalletRepository } from './core/ports/IWalletRepository.js';
         new DepositUseCase(repository),
       inject: ['IWalletRepository'], // Injeta o token que definimos logo acima
     },
+    OutboxProcessor,
   ],
 })
 export class WalletModule {}

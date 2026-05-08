@@ -11,7 +11,7 @@ export class Wallet {
   private balance: number; // Trabalhar com centavos é boa prática financeira
   private createdAt: Date;
 
-  private readonly events: DomainEvent[] = [];
+  private events: DomainEvent[] = [];
 
   private constructor(
     id: string,
@@ -48,6 +48,10 @@ export class Wallet {
     }
     this.balance += amount;
 
+    if (!this.events) {
+      this.events = [];
+    }
+
     this.events.push({
       eventType: 'WalletFunded',
       payload: {
@@ -72,11 +76,13 @@ export class Wallet {
   }
 
   public getDomainEvents(): DomainEvent[] {
-    return [...this.events];
+    return [...(this.events || [])];
   }
 
   public clearEvents(): void {
-    this.events.length = 0;
+    if (this.events) {
+      this.events.length = 0;
+    }
   }
   // Getters para expor os dados (sem setters, para proteger o estado)
   public getId(): string {
