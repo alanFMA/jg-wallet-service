@@ -106,8 +106,8 @@ export class Wallet {
   public getUserId(): string {
     return this.userId;
   }
-  public getBalance(): string {
-    return this.balance.toString();
+  public getBalance(): number {
+    return this.balance;
   } // Exemplo simples
   public getBalanceAmount(): number {
     return this.balance;

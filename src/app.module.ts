@@ -11,6 +11,5 @@ import { ScheduleModule } from '@nestjs/schedule';
     MikroOrmModule.forRoot(mikroOrmConfig),
     WalletModule,
   ],
-  // Removemos as referências ao app.controller e app.service daqui
 })
 export class AppModule {}

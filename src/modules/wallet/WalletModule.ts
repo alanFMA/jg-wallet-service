@@ -10,6 +10,7 @@ import { SqsMessageBrokerImpl } from './adapters/out/SqsMessageBrokerImpl.js';
 import { OutboxEventSchema } from './adapters/out/OutboxEventSchema.js';
 import { OutboxProcessor } from './workers/OutboxProcessor.js';
 import { WithdrawUseCase } from './core/use-cases/WithdrawUseCase.js';
+import { GetBalanceUseCase } from './core/use-cases/GetBalanceUseCase.js';
 
 @Module({
   // Importamos o Schema para o MikroORM saber lidar com ele neste módulo
@@ -37,6 +38,12 @@ import { WithdrawUseCase } from './core/use-cases/WithdrawUseCase.js';
       provide: WithdrawUseCase,
       useFactory: (repository: IWalletRepository) =>
         new WithdrawUseCase(repository),
+      inject: ['IWalletRepository'],
+    },
+    {
+      provide: GetBalanceUseCase,
+      useFactory: (repository: IWalletRepository) =>
+        new GetBalanceUseCase(repository),
       inject: ['IWalletRepository'],
     },
   ],

@@ -7,9 +7,11 @@ import {
   HttpCode,
   HttpStatus,
   HttpException,
+  Get,
 } from '@nestjs/common';
 import { DepositUseCase } from '../../core/use-cases/DepositUseCase.js';
 import { WithdrawUseCase } from '../../core/use-cases/WithdrawUseCase.js';
+import { GetBalanceUseCase } from '../../core/use-cases/GetBalanceUseCase.js';
 
 // DTO para validar a entrada
 export class DepositDto {
@@ -27,6 +29,7 @@ export class WalletController {
   constructor(
     private readonly depositUseCase: DepositUseCase,
     private readonly withdrawUseCase: WithdrawUseCase,
+    private readonly getBalanceUseCase: GetBalanceUseCase,
   ) {}
 
   @Post(':id/deposit')
@@ -72,6 +75,26 @@ export class WalletController {
           throw new HttpException(error.message, HttpStatus.NOT_FOUND);
         }
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      }
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Get(':id/balance')
+  async getBalance(@Param('id') walletId: string) {
+    try {
+      const balance = await this.getBalanceUseCase.execute(walletId);
+
+      return {
+        walletId,
+        balance,
+      };
+    } catch (error: unknown) {
+      if (error instanceof Error && error.message === 'Wallet not found') {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
       }
       throw new HttpException(
         'Internal server error',
